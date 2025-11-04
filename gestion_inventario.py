@@ -23,13 +23,14 @@ import os
 # ======================================================
 
 class Proveedor:
-    def __init__(self, nombre, contacto):
-        # TODO: definir los atributos de la clase
-        pass
+    def __init__(self, codigo, nombre, contacto):
+        self.codigo = codigo
+        self.nombre = nombre
+        self.contacto = contacto
 
     def __str__(self):
         # TODO: devolver una cadena legible con el nombre y el contacto del proveedor
-        pass
+        {f"El nombre del proveedor es {self.nombre}, cuyo código es {self.codigo} y su contacto es {self.contacto}"}
 
 
 # ======================================================
@@ -38,13 +39,16 @@ class Proveedor:
 
 class Producto:
     def __init__(self, codigo, nombre, precio, stock, proveedor):
-        # TODO: definir los atributos de la clase
-        pass
+        self.codigo = codigo
+        self.nombre = nombre
+        self.precio = float(precio)
+        self.stock = stock
+        self.proveedor = proveedor
 
     def __str__(self):
         # TODO: devolver una representación legible del producto
         # Ejemplo: "[P001] Teclado - 45.99 € (10 uds.) | Proveedor: TechZone (ventas@techzone.com)"
-        pass
+        {f"[{self.codigo}] {self.nombr} - {self.precio} € ({self.stock} uds.) | Proveedor: {self.proveedor.nombre} ({self.proveedor.contacto})"}
 
 
 # ======================================================
@@ -53,59 +57,80 @@ class Producto:
 
 class Inventario:
     def __init__(self, nombre_fichero):
-        # TODO: definir los atributos e inicializar la lista de productos
-        pass
+        self.nombre_fichero = nombre_fichero
 
-    def cargar(self):
+    def cargar(self, archivo = "inventario.json"):
         """
         Carga los datos del fichero JSON si existe y crea los objetos Producto y Proveedor.
         Si el fichero no existe, crea un inventario vacío.
         """
         # TODO: implementar la lectura del fichero JSON y la creación de objetos
-        pass
+        try:
+            with open(archivo, 'r') as f:
+                cargar_inventario = json.load(f)
+                self.prodcutos = []
+                for p in cargar_inventario:
+                    inventario = Producto(p["codigo"], p["nombre"], p["precio"], p["stock"])
+                    inventario.completada = p["completada"]
+                    self.producutos.append(inventario)
+        except FileNotFoundError:
+            print("No se encontró el archivo de tareas. Comenzando con una lista vacía.")
 
-    def guardar(self):
+    def guardar(self, archivo="inventario.json"):
         """
         Guarda el inventario actual en el fichero JSON.
         Convierte los objetos Producto y Proveedor en diccionarios.
         """
         # TODO: recorrer self.productos y guardar los datos en formato JSON
-        pass
+        with open(archivo, 'w') as f:
+            json.dump([p.__dict__ for p in self.prodcutos], f, default=str)
 
     def anadir_producto(self, producto):
         """
         Añade un nuevo producto al inventario si el código no está repetido.
         """
         # TODO: comprobar si el código ya existe y, si no, añadirlo
-        pass
-
+        self.inventario = []
+        self.inventario.append(producto)
+        
+        
     def mostrar(self):
         """
         Muestra todos los productos del inventario.
         """
         # TODO: mostrar todos los productos almacenados
-        pass
+        return {"f[{self.codigo}] {self.nombr} - {self.precio} € ({self.stock} uds.)"}
 
     def buscar(self, codigo):
         """
         Devuelve el producto con el código indicado, o None si no existe.
         """
         # TODO: buscar un producto por código
-        pass
+        for c in self.inventario:
+            if c.codigo == int(codigo):
+                return c
 
-    def modificar(self, codigo, nombre=None, precio=None, stock=None):
+    def modificar(self, codigo, nombre=None, precio=None, stock=None, **kwargs):
         """
         Permite modificar los datos de un producto existente.
         """
         # TODO: buscar el producto y actualizar sus atributos
-        pass
+        for c in self.inventario:
+            if c.codigo == codigo:
+                codigo.actualizar(**kwargs)
 
     def eliminar(self, codigo):
         """
         Elimina un producto del inventario según su código.
         """
         # TODO: eliminar el producto de la lista
-        pass
+        c = self.inventario(codigo)
+        if not c:
+            print("No existe ese código de producto.")
+            return
+        else:
+            self.inventario.remove(c)
+            print("Producto eliminado.")
 
     def valor_total(self):
         """
@@ -144,6 +169,44 @@ def main():
 
         # TODO: implementar las acciones correspondientes a cada opción del menú
 
+        if opcion == '1':
+            codigo = input("Código: ")
+            nombre = input("Nombre: ")
+            precio = input("Precio: ")
+            stock = input("Stock: ")
+            proveedor = input("Introduce los datos del proveedor:")
+            try:
+                nuevo_producto = Producto(codigo, nombre, precio, stock, proveedor)
+                nuevo_producto.anadir_producto()
+                print("Producto añadido")
+            except ValueError:
+                print("Vuelva a intentarlo.")
+        
+        elif opcion == '2':
+            pass
 
+        elif opcion == '3':
+            pass
+
+        elif opcion == '4':
+            pass
+
+        elif opcion == '5':
+            codigo = input("Número de código del producto a eliminar: ").strip()
+            codigo.eliminar(codigo)
+
+        elif opcion == '6':
+            pass
+
+        elif opcion == '7':
+            pass
+
+        elif opcion == '8':
+            print("Tareas guardadas exitosamente.")
+            break
+
+        else:
+            print("Opción inválida. Intente nuevamente.")
+            
 if __name__ == "__main__":
     main()
